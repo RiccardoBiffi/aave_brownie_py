@@ -2,7 +2,12 @@ from brownie import Contract, network, accounts, config, interface
 from enum import Enum
 
 FORKED_LOCAL_ENVIRONMENTS = ["mainnet-fork", "mainnet-fork-dev"]
-LOCAL_BLOCKCHAIN_ENVIRONMENTS = ["development", "ganache-local"]
+LOCAL_BLOCKCHAIN_ENVIRONMENTS = [
+    "development",
+    "ganache-local",
+    "mainnet-fork",
+    "mainnet-fork-dev",
+]
 contract_to_mock = {}
 
 
