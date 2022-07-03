@@ -9,8 +9,6 @@ pragma solidity 0.6.12;
  * @author Aave
  **/
 interface ILendingPoolAddressesProvider {
-    // I could define only the functions I need to use, not the whole interface
-
     event MarketIdSet(string newMarketId);
     event LendingPoolUpdated(address indexed newAddress);
     event ConfigurationAdminUpdated(address indexed newAddress);

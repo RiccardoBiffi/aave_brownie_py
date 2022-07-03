@@ -1,6 +1,6 @@
-pragma solidity ^0.4.19;
+pragma solidity ^0.6.6;
 
-interface IWeth {
+interface IERC20 {
     function allowance(address owner, address spender)
         external
         view
@@ -13,6 +13,13 @@ interface IWeth {
     function balanceOf(address owner) external view returns (uint256 balance);
 
     function decimals() external view returns (uint8 decimalPlaces);
+
+    function decreaseApproval(address spender, uint256 addedValue)
+        external
+        returns (bool success);
+
+    function increaseApproval(address spender, uint256 subtractedValue)
+        external;
 
     function name() external view returns (string memory tokenName);
 
@@ -29,8 +36,4 @@ interface IWeth {
         address to,
         uint256 value
     ) external returns (bool success);
-
-    function deposit() external;
-
-    function withdraw(uint256 wad) external;
 }
