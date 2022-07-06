@@ -1,3 +1,4 @@
+from asyncio.windows_events import NULL
 import time
 from brownie import config, network, interface
 from web3 import Web3
@@ -9,9 +10,6 @@ from decimal import Decimal
 
 AMOUNT = Web3.toWei(0.01, "ether")
 STABLE_RATE = 1
-LPAP = interface.ILendingPoolAddressesProvider(
-    config["networks"][network.show_active()]["lending_pool_addresses_provider"]
-)
 BORROW_WEAKEN = Decimal(0.9)
 
 
@@ -22,7 +20,10 @@ def main():
     if network.show_active() in ["mainnet-fork"]:
         get_weth()
 
-    lending_pool = get_lending_pool()
+    LPAP = interface.ILendingPoolAddressesProvider(
+        config["networks"][network.show_active()]["lending_pool_addresses_provider"]
+    )
+    lending_pool = get_lending_pool(LPAP)
 
     # I need to approve() to authorize the lending contract to take AMOUNT of my tokens from the token contract
     approve_erc20(AMOUNT, lending_pool.address, weth_address, account)
@@ -45,7 +46,7 @@ def main():
     borrowable_eth, borrowed = get_borrowable_data(lending_pool, account)
 
     # Let's repay our debt
-    # repay_erc20(lending_pool, Web3.toWei(dai_to_borrow, "ether"), dai_address, account)
+    repay_erc20(lending_pool, Web3.toWei(dai_to_borrow, "ether"), dai_address, account)
 
     # Let's see our updated position
     borrowable_eth, borrowed = get_borrowable_data(lending_pool, account)
@@ -127,10 +128,10 @@ def approve_erc20(amount, approved_spender, erc20_address, account):
     token = interface.IERC20(erc20_address)
     tx = token.approve(approved_spender, amount, {"from": account})
     print("ERC20 token approved!\n")
-    return tx
+    return True
 
 
-def get_lending_pool():
+def get_lending_pool(LPAP):
     # I need to get the address from the right AAVE market using the AddressProvider
     lending_pool_address = LPAP.getLendingPool()
     lending_pool = interface.ILendingPool(lending_pool_address)
