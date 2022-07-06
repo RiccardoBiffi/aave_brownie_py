@@ -51,7 +51,18 @@ def main():
     # Let's see our updated position
     borrowable_eth, borrowed = get_borrowable_data(lending_pool, account)
 
+    withdraw_erc20(weth_address, lending_pool, account)
     time.sleep(1)
+
+
+def withdraw_erc20(erc20_address, lending_pool, account):
+    tx = lending_pool.withdraw(
+        erc20_address, AMOUNT - 10**15, account.address, {"from": account}
+    )
+    tx.wait(1)
+    amount = Web3.fromWei(AMOUNT - 10**15, "ether")
+    print(f"{amount} ERC20 token withdrawed!\n")
+    return tx
 
 
 def repay_erc20(lending_pool, amount_to_repay, erc20_address, account):
@@ -120,7 +131,10 @@ def deposit_erc20(weth_address, lending_pool, account):
     tx = lending_pool.deposit(
         weth_address, AMOUNT, account.address, 0, {"from": account}
     )  # _referralCode parameter is now deprecated, always set 0
-    print("ERC20 token deposited!\n")
+    tx.wait(1)
+
+    amount = Web3.fromWei(AMOUNT, "ether")
+    print(f"{amount} ERC20 token deposited!\n")
     return tx
 
 
@@ -128,6 +142,7 @@ def approve_erc20(amount, approved_spender, erc20_address, account):
     token = interface.IERC20(erc20_address)
     tx = token.approve(approved_spender, amount, {"from": account})
     print("ERC20 token approved!\n")
+    tx.wait(1)
     return True
 
 
